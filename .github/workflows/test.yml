@@ -1,0 +1,85 @@
+name: Recipe validation
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: recipe contract
+    runs-on: ubuntu-24.04
+    outputs:
+      present: ${{ steps.recipe.outputs.present }}
+      version: ${{ steps.recipe.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Lint the scripts
+        run: shellcheck --severity=warning template/render.sh scripts/*.sh && shellcheck --severity=warning --shell=bash template/artifactbridge.install
+
+      - name: Check the recipe against template/
+        run: scripts/check-recipe.sh
+
+      - name: Detect a published recipe
+        id: recipe
+        run: |
+          set -euo pipefail
+          if [ -f PKGBUILD ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "version=$(sed -n 's/^pkgver=//p' PKGBUILD)" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  package:
+    name: arch package
+    needs: contract
+    if: needs.contract.outputs.present == 'true'
+    runs-on: ubuntu-24.04
+    container: archlinux:latest
+    timeout-minutes: 30
+    steps:
+      - name: Install tools
+        run: |
+          set -euo pipefail
+          # pacman 7's sandboxed download user cannot start in some container
+          # runtimes; package signatures are still verified.
+          sed -i -e 's/^#DisableSandboxFilesystem/DisableSandboxFilesystem/' \
+            -e 's/^#DisableSandboxSyscalls/DisableSandboxSyscalls/' /etc/pacman.conf
+          pacman -Syu --noconfirm --needed base-devel git jq namcap >/dev/null
+          useradd -m builder
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build the package
+        run: |
+          set -euo pipefail
+          build="$RUNNER_TEMP/build"
+          mkdir -p "$build"
+          cp PKGBUILD .SRCINFO artifactbridge.install LICENSE "$build/"
+          chown -R builder: "$build"
+          cd "$build"
+          runuser -u builder -- makepkg --printsrcinfo | diff -u .SRCINFO -
+          namcap PKGBUILD
+          runuser -u builder -- makepkg --verifysource --noconfirm
+          # shellcheck disable=SC1091
+          mapfile -t depends < <(. ./PKGBUILD && printf '%s\n' "${depends[@]}")
+          pacman -S --noconfirm --needed "${depends[@]}" >/dev/null
+          runuser -u builder -- makepkg --noconfirm
+          namcap ./*.pkg.tar.zst
+
+      - name: Install, verify and remove the package
+        env:
+          VERSION: ${{ needs.contract.outputs.version }}
+        run: |
+          set -euo pipefail
+          pacman -U --noconfirm "$RUNNER_TEMP"/build/*.pkg.tar.zst
+          identity="$(artifactbridge version --json)"
+          printf '%s\n' "$identity"
+          printf '%s' "$identity" | jq -e --arg version "$VERSION" \
+            '.version == $version and .installation_owner == "linux-pacman"' >/dev/null
+          pacman -Rns --noconfirm artifactbridge-bin
+          ! command -v artifactbridge

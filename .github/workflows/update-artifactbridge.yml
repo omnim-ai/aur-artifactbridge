@@ -1,0 +1,101 @@
+name: Update ArtifactBridge recipe
+
+on:
+  repository_dispatch:
+    types: [artifactbridge_stable_release]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Stable release tag, for example tray-v0.5.119
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: artifactbridge-recipe-${{ github.event.client_payload.tag || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: verify release and push recipe branch
+    runs-on: ubuntu-24.04
+    container: archlinux:latest
+    timeout-minutes: 30
+    steps:
+      - name: Install tools
+        run: |
+          set -euo pipefail
+          # pacman 7's sandboxed download user cannot start in some container
+          # runtimes; package signatures are still verified.
+          sed -i -e 's/^#DisableSandboxFilesystem/DisableSandboxFilesystem/' \
+            -e 's/^#DisableSandboxSyscalls/DisableSandboxSyscalls/' /etc/pacman.conf
+          pacman -Syu --noconfirm --needed base-devel git jq >/dev/null
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate the dispatch
+        id: input
+        env:
+          TAG: ${{ github.event.client_payload.tag || inputs.tag }}
+          OWNER: ${{ github.event_name == 'workflow_dispatch' && 'aur' || github.event.client_payload.update_owner }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$TAG" | grep -Eq '^tray-v[0-9]+(\.[0-9]+)*$' || { echo "invalid tag: $TAG" >&2; exit 1; }
+          [ "$OWNER" = aur ] || { echo "update_owner is not aur: $OWNER" >&2; exit 1; }
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#tray-v}" >> "$GITHUB_OUTPUT"
+
+      - name: Download the release
+        env:
+          TAG: ${{ steps.input.outputs.tag }}
+        run: |
+          set -euo pipefail
+          release_dir="$RUNNER_TEMP/release"
+          mkdir -p "$release_dir"
+          for asset in VERSION RELEASE-METADATA.json SHA256SUMS ArtifactBridge-Tray-linux-x86_64.tar.gz; do
+            curl --fail --silent --show-error --location --retry 5 --retry-all-errors \
+              "https://app.artifactbridge.com/tray/releases/download/$TAG/$asset" --output "$release_dir/$asset"
+          done
+
+      - name: Verify the release and render the recipe
+        env:
+          TAG: ${{ steps.input.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          scripts/render-release.sh "$TAG" "$RUNNER_TEMP/release"
+          useradd -m builder
+          srcinfo="$RUNNER_TEMP/srcinfo"
+          mkdir -p "$srcinfo"
+          cp PKGBUILD artifactbridge.install LICENSE "$srcinfo/"
+          chown -R builder: "$srcinfo"
+          # shellcheck disable=SC2016
+          runuser -u builder -- bash -c 'cd "$1" && makepkg --printsrcinfo' _ "$srcinfo" > .SRCINFO
+          scripts/check-recipe.sh
+
+      - name: Commit and push the recipe branch
+        env:
+          VERSION: ${{ steps.input.outputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "::notice::artifactbridge-bin $VERSION is already published on main."
+            exit 0
+          fi
+          current="$(git show HEAD:PKGBUILD 2>/dev/null | sed -n 's/^pkgver=//p' || true)"
+          if [ -n "$current" ] && [ "$(vercmp "$VERSION" "$current")" -le 0 ]; then
+            echo "release $VERSION does not advance published recipe $current" >&2
+            exit 1
+          fi
+          branch="automation/artifactbridge-bin-$VERSION"
+          git switch -C "$branch"
+          git add -- PKGBUILD .SRCINFO artifactbridge.install LICENSE
+          git config user.name "artifactbridge-release[bot]"
+          git config user.email "artifactbridge-release[bot]@users.noreply.github.com"
+          git commit -m "artifactbridge-bin $VERSION"
+          # A fresh commit every run: the release sender waits for a new head.
+          git push --force origin "HEAD:refs/heads/$branch"
+          # shellcheck disable=SC2016
+          printf 'artifactbridge-bin %s recipe branch: `%s`\n' "$VERSION" "$branch" >> "$GITHUB_STEP_SUMMARY"

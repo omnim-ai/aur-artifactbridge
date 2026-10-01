@@ -1,0 +1,85 @@
+name: Publish to the AUR
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - PKGBUILD
+      - .SRCINFO
+      - artifactbridge.install
+      - LICENSE
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-aur
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: push artifactbridge-bin to the AUR
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Resolve the AUR credentials
+        id: config
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          AUR_SSH_KNOWN_HOSTS: ${{ secrets.AUR_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          present=0
+          [ -n "$AUR_SSH_PRIVATE_KEY" ] && present=$((present + 1))
+          [ -n "$AUR_SSH_KNOWN_HOSTS" ] && present=$((present + 1))
+          if [ "$present" -eq 0 ]; then
+            echo "::warning title=AUR not published::AUR_SSH_PRIVATE_KEY and AUR_SSH_KNOWN_HOSTS are not configured, so the recipe was not pushed to the AUR."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$present" -ne 2 ]; then
+            echo "AUR publishing is half-configured. Set both AUR_SSH_PRIVATE_KEY and AUR_SSH_KNOWN_HOSTS." >&2
+            exit 1
+          fi
+          echo "configured=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.config.outputs.configured == 'true'
+
+      - name: Push the recipe
+        if: steps.config.outputs.configured == 'true'
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          AUR_SSH_KNOWN_HOSTS: ${{ secrets.AUR_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          files=(PKGBUILD .SRCINFO artifactbridge.install LICENSE)
+          for file in "${files[@]}"; do
+            [ -f "$file" ] || { echo "the recipe has no $file" >&2; exit 1; }
+          done
+          pkgver="$(sed -n 's/^pkgver=//p' PKGBUILD)"
+          pkgrel="$(sed -n 's/^pkgrel=//p' PKGBUILD)"
+
+          ssh_dir="$RUNNER_TEMP/aur-ssh"
+          (umask 077 && mkdir -p "$ssh_dir" &&
+            printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > "$ssh_dir/key" &&
+            printf '%s\n' "$AUR_SSH_KNOWN_HOSTS" > "$ssh_dir/known_hosts")
+          trap 'rm -rf "$ssh_dir"' EXIT
+          export GIT_SSH_COMMAND="ssh -i $ssh_dir/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$ssh_dir/known_hosts"
+
+          aur="$RUNNER_TEMP/aur"
+          git clone ssh://aur@aur.archlinux.org/artifactbridge-bin.git "$aur"
+          # The AUR rejects subdirectories: the package repository holds
+          # exactly the recipe files.
+          git -C "$aur" rm -rq --ignore-unmatch .
+          cp "${files[@]}" "$aur/"
+          git -C "$aur" add -- "${files[@]}"
+          if git -C "$aur" diff --cached --quiet; then
+            echo "The AUR already has artifactbridge-bin $pkgver-$pkgrel."
+            exit 0
+          fi
+          git -C "$aur" -c user.name="artifactbridge-release[bot]" \
+            -c user.email="artifactbridge-release[bot]@users.noreply.github.com" \
+            commit -m "artifactbridge-bin $pkgver-$pkgrel"
+          git -C "$aur" push origin HEAD:master
+          printf 'Pushed artifactbridge-bin %s-%s to the AUR.\n' "$pkgver" "$pkgrel" >> "$GITHUB_STEP_SUMMARY"
