@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en" data-page="terms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ArtifactBridge — Terms of Service</title>
+<meta name="description" content="Terms of Service for ArtifactBridge — the rules and conditions for using the Service.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a3b2a'/%3E%3Cpolygon points='7,26 11.5,26 17.5,6 13,6' fill='%23f2f0e8'/%3E%3Cpolygon points='15,26 19.5,26 25.5,6 21,6' fill='%23f2f0e8'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0a3b2a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Secondary landing page in the September 2026 landing brand. Every value
+     below comes from public/landing/index.html: the two colors (--bottle,
+     --bone), the one accent (--cursor), the heading sizes (--type-h2, --type-h3),
+     Playfair Display for headings and JetBrains Mono for everything else.
+     The page adds no color, font, or asset of its own. The layout follows
+     the "Site Pages" design: a bone page, the brand line, one reading
+     column, ruled section headings, and a green footer band. This block is
+     identical on every secondary page. Edit all of them together. */
+  :root{
+    --bottle:oklch(28.5% .058 163);
+    --bone:oklch(95.1% .014 95);
+    --cursor:oklch(62% .22 27);
+    --font-mono:"JetBrains Mono",ui-monospace,monospace;
+    --font-display:"Playfair Display",Georgia,serif;
+    --type-h2:clamp(2rem, .9rem + 2.9vw, 3.75rem);
+    --type-h3:1.375rem;
+    --header-h:4rem;
+    --measure:47.5rem;
+  }
+  *,::before,::after{box-sizing:border-box;border:0 solid;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    min-height:100vh;display:flex;flex-direction:column;
+    font-family:var(--font-mono);font-size:13.5px;line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--bottle);color:var(--bone);}
+  :focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+  a{
+    color:inherit;text-decoration:underline;
+    text-decoration-thickness:1px;text-underline-offset:3px;
+    transition:color .15s;
+  }
+  a:hover{color:var(--cursor);}
+  strong,b{font-weight:500;}
+
+  .band-bone{background-color:var(--bone);color:var(--bottle);}
+  .band-green{background-color:var(--bottle);color:var(--bone);}
+  .label-mono{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.12em;}
+  .specimen{font-family:var(--font-display);text-transform:uppercase;letter-spacing:-.02em;font-weight:900;line-height:.9;}
+  .type-h2{font-size:var(--type-h2);}
+
+  /* ---- site header: the landing brand line, plus the way back ---- */
+  .site-header{height:var(--header-h);border-bottom:1px solid color-mix(in oklab,currentColor 20%,transparent);}
+  .site-header nav{
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    height:100%;max-width:86rem;margin:0 auto;padding:0 1.25rem;
+  }
+  .brand{font-size:12px;font-weight:500;text-decoration:none;white-space:nowrap;}
+  .brand-tag{display:block;opacity:.6;}
+  .back{font-size:11px;letter-spacing:.2em;text-decoration:none;white-space:nowrap;}
+  .site-header a:hover{color:inherit;text-decoration:underline;}
+
+  /* ---- document head ---- */
+  main{flex:1;}
+  .column{max-width:var(--measure);margin:0 auto;padding:3.5rem 1.25rem 6rem;}
+  [data-page="subprocessors"] .column{--measure:53.75rem;}
+  .doc-back{
+    display:inline-block;font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+    text-decoration:none;opacity:.6;transition:opacity .15s;
+  }
+  .doc-back:hover{color:inherit;opacity:1;}
+  .eyebrow{font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:var(--cursor);margin:1.75rem 0 1rem;}
+  h1{margin:0 0 .875rem;text-wrap:balance;}
+  .legal-meta{font-size:11px;letter-spacing:.15em;text-transform:uppercase;opacity:.6;margin:0;}
+  .legal-lead{margin:2.5rem 0 1rem;text-wrap:pretty;}
+
+  /* ---- document body ---- */
+  p{margin:0 0 1rem;}
+  ul,ol,.doc-index{margin:0 0 1rem;padding-left:1.375rem;}
+  li{margin-bottom:.5rem;}
+  .legal-body h2{
+    font-family:var(--font-display);font-weight:900;text-transform:uppercase;
+    letter-spacing:-.02em;line-height:.95;font-size:1.875rem;
+    border-top:1px solid color-mix(in oklab,currentColor 30%,transparent);
+    padding-top:2.25rem;margin:3rem 0 1.25rem;scroll-margin-top:1rem;
+    text-wrap:balance;
+  }
+  .legal-body h3{
+    font-family:var(--font-display);font-weight:900;text-transform:uppercase;
+    letter-spacing:-.02em;line-height:1;font-size:var(--type-h3);
+    margin:2.25rem 0 1rem;text-wrap:balance;
+  }
+  code{background:color-mix(in oklab,currentColor 8%,transparent);padding:1px 6px;font-size:12.5px;}
+  .legal-contact{margin-top:3rem;padding-top:2.25rem;border-top:1px solid color-mix(in oklab,currentColor 30%,transparent);}
+  .legal-contact h2{border-top:0;padding-top:0;margin-top:0;}
+
+  /* ---- tables (the subprocessor list, the roles table) ---- */
+  .legal-table-wrap{overflow-x:auto;margin:0 0 1.25rem;}
+  .legal-table-wrap:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+  .legal-table{border-collapse:collapse;width:100%;min-width:40rem;font-size:12px;line-height:1.7;}
+  .legal-table th,.legal-table td{
+    border:1px solid color-mix(in oklab,currentColor 30%,transparent);
+    padding:10px 12px;text-align:left;vertical-align:top;
+  }
+  .legal-table th{
+    background:color-mix(in oklab,currentColor 6%,transparent);
+    font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  }
+  .legal-table td:first-child{font-weight:500;}
+
+  /* ---- pricing: the lead, the rule, the actions, the closing band ---- */
+  .lead{font-size:14px;font-weight:500;margin:0 0 1.25rem;}
+  .rule{width:26rem;max-width:100%;border-top:1px solid currentColor;opacity:.35;margin:0 0 1.5rem;}
+  .closing-actions{display:flex;gap:1rem;flex-wrap:wrap;margin:2.25rem 0 0;}
+  .btn{
+    display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    padding:15px 30px;text-decoration:none;
+    background-color:var(--bottle);color:var(--bone);border:1px solid var(--bottle);
+    transition:background-color .15s,border-color .15s,color .15s;
+  }
+  .btn:hover{background-color:var(--cursor);border-color:var(--cursor);color:var(--bone);}
+  .btn-quiet{background-color:transparent;color:inherit;border-color:color-mix(in oklab,currentColor 50%,transparent);}
+  .btn-quiet:hover{background-color:transparent;border-color:currentColor;color:inherit;}
+  .closing{text-align:center;padding:6rem 1.25rem;}
+  .closing .column{padding:0;}
+  .closing .eyebrow{margin:0 0 1.25rem;}
+  .closing h2{margin:0 0 1.25rem;text-wrap:balance;}
+  .closing p{max-width:29rem;margin:0 auto 2.25rem;font-size:13px;opacity:.85;}
+  .closing .closing-actions{justify-content:center;margin:0;}
+  .closing .btn{background-color:var(--bone);color:var(--cursor);border-color:var(--bone);}
+  .closing .btn:hover{background-color:var(--cursor);color:var(--bone);border-color:var(--cursor);}
+  .closing .btn-quiet{background-color:transparent;color:inherit;border-color:color-mix(in oklab,currentColor 60%,transparent);}
+  .closing .btn-quiet:hover{border-color:currentColor;}
+
+  /* ---- footer band ---- */
+  .site-footer{padding:1.75rem 1.25rem;font-size:11px;letter-spacing:.15em;}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;max-width:86rem;margin:0 auto;}
+  .foot-brand{font-weight:500;margin:0;}
+  .foot-links{display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;}
+  .foot-links a{text-decoration:none;}
+  .foot-links a:hover{color:inherit;text-decoration:underline;}
+  .foot-meta{opacity:.6;}
+
+  @media (min-width:40rem){
+    .site-header nav{padding:0 2rem;}
+    .brand-tag{display:inline;}
+    .column{padding:3.5rem 3rem 6rem;}
+    .closing{padding:6rem 3rem;}
+    .site-footer{padding:1.75rem 2rem;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    a,.btn,.doc-back{transition:none;}
+  }
+</style>
+</head>
+<body class="band-bone">
+
+<header class="site-header">
+  <nav aria-label="Primary">
+    <a href="./" class="label-mono brand">// ArtifactBridge <span class="brand-tag">Public beta</span></a>
+    <a href="./" class="label-mono back">Back to site</a>
+  </nav>
+</header>
+
+<main>
+  <div class="column">
+    <a class="doc-back" href="./">&lsaquo; ArtifactBridge</a>
+    <p class="eyebrow">// LEGAL</p>
+    <h1 class="specimen type-h2">Terms of Service</h1>
+    <p class="legal-meta">Last updated: September 5, 2026 &middot; Version tos_2026_09_05_01 &middot; Effective: September 5, 2026</p>
+
+<p class="legal-lead">
+      Welcome to ArtifactBridge. These Terms of Service (&ldquo;Terms&rdquo;) govern your access to and use of the
+      ArtifactBridge website, application, MCP server, and related services (collectively, the &ldquo;Service&rdquo;)
+      operated by Omnim Inc. (&ldquo;ArtifactBridge,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;).
+      By creating an account or using the Service, you agree to these Terms.
+    </p>
+
+    <div class="legal-body">
+
+      <section class="legal-section">
+        <h2>1. Eligibility</h2>
+        <p>You must be at least 16 years old and able to form a binding contract to use the Service. If you are using
+        the Service on behalf of an organization, you represent that you are authorized to bind that organization to
+        these Terms, and &ldquo;you&rdquo; means that organization.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>2. Your Account and Credentials</h2>
+        <p>You are responsible for maintaining the security of your account, API tokens, OAuth grants, and any
+        credentials you connect to the Service. You agree to notify us promptly of any unauthorized use or security
+        breach. Every action taken with your account, your tokens, or a grant you issued is treated as your action,
+        whether a person or an AI agent performed it. We are not liable for losses caused by unauthorized access to your
+        account or by an agent that you or a member of your workspace authorized.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>3. Acceptable Use</h2>
+        <p>You agree not to:</p>
+        <ul>
+          <li>Use the Service for any unlawful purpose or in violation of any applicable law.</li>
+          <li>Attempt to access data or systems you are not authorized to access.</li>
+          <li>Upload, sync, or store content that infringes the intellectual property or privacy rights of others.</li>
+          <li>Introduce malware, viruses, or harmful code through the Service.</li>
+          <li>Interfere with, disrupt, or overload the Service or its infrastructure.</li>
+          <li>Reverse engineer, decompile, or disassemble any part of the Service except as permitted by law.</li>
+          <li>Resell, sublicense, or redistribute access to the Service without our written permission.</li>
+          <li>Use the Service to build a competing product, or to train a machine-learning model on Content that is not yours.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>4. Connected Sources, Agents, and AI Output</h2>
+        <p>The Service lets you connect external accounts (such as Google Docs, Notion, Slack, GitHub, and Linear) and
+        grant AI agents scoped access to your documents through an OAuth-secured MCP server. You are solely responsible
+        for the connections you authorize, the agents you grant access to, the scope of that access, and everything
+        those agents do with it.</p>
+        <p><strong>What the Service writes to a connected source.</strong> Agents act on managed documents inside
+        ArtifactBridge. ArtifactBridge does not edit, archive, or delete the body of your original external documents.
+        The Service writes to a connected source only in these forms, and only when you or an agent you authorized
+        starts the action: comments and replies on a connected document or issue, messages in a connected chat
+        channel, and the export of a managed document that you request. Disconnecting a source or deleting your
+        ArtifactBridge account never changes the original document in the external source.</p>
+        <p><strong>Human approval.</strong> A change that an agent proposes to published or managed content takes
+        effect only after a person with the right permission accepts it. You are responsible for reviewing a proposal
+        before you accept it, and for the result of an accepted proposal.</p>
+        <p><strong>AI output.</strong> Content that an AI agent, the built-in chat companion, or any other automated
+        feature generates may be inaccurate, incomplete, out of date, or unsuitable for your purpose. AI output is not
+        professional, legal, financial, medical, or other expert advice. You must review AI output before you rely on
+        it or act on it. We do not control, and are not responsible for, the models, agents, or agent hosts that you
+        or third parties connect to the Service.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>5. Third-Party Services</h2>
+        <p>The connected sources, agent platforms, and model providers that you use with the Service are third-party
+        services. Your use of them is governed by their own terms and privacy policies, not by these Terms. We do not
+        control those services. We are not responsible for their availability, their changes, their data handling, or
+        any loss that results from their action or failure. A third-party service may change or withdraw the access
+        that a connection depends on. In that case the connected feature may stop working until the service restores
+        the access or we adapt the Service.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>6. Your Content, Backups, and Export</h2>
+        <p>You retain ownership of all documents, artifacts, comments, and other content you submit or create through
+        the Service (&ldquo;Content&rdquo;). You grant ArtifactBridge a worldwide, non-exclusive license to host, store,
+        use, display, sync, and process your Content solely as necessary to operate and provide the Service to you.
+        We do not use your Content to train a general-purpose AI model. You are responsible for ensuring you have the
+        rights to submit any Content you import or sync from external sources.</p>
+        <p><strong>Backups.</strong> The Service is not a backup or archival service, and it is not the system of
+        record for your external documents. You can export your Content at any time through the Service. You are
+        responsible for keeping your own copies of Content that you need. We keep versions of managed documents as a
+        product feature, not as a guarantee. We do not warrant that a document, a version, or a backup will be
+        available to restore, and we publish no recovery time objective or recovery point objective.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>7. Intellectual Property and Feedback</h2>
+        <p>The Service, including its software, design, features, and branding, is owned by ArtifactBridge and protected
+        by intellectual property laws. These Terms do not grant you any right to use our trademarks, logos, or trade
+        dress without our prior written consent. If you send us feedback or suggestions about the Service, you grant us
+        a perpetual, irrevocable, royalty-free license to use them without any obligation to you.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>8. Privacy and Data Processing</h2>
+        <p>Our handling of your personal data is described in our
+        <a href="./privacy.html">Privacy Policy</a>, which is incorporated into these Terms by reference. Where you
+        use the Service to process personal data that you control, and data protection law requires a processor
+        agreement, our Data Processing Addendum applies. Request it at the contact address in Section 17.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>9. Fees and Billing</h2>
+        <h3>Plans and subscription unit</h3>
+        <p>We offer a Free tier and a paid Team tier. You buy a subscription per workspace. Each workspace you upgrade
+        is a separate subscription. The Free tier costs nothing and needs no payment method.</p>
+        <h3>Price, currency, and taxes</h3>
+        <p>We state the price, the currency, the billing interval, and the taxes that apply on the purchase screen
+        before you confirm the purchase. Those stated values apply to the purchase.</p>
+        <h3>Billing interval and renewal</h3>
+        <p>We charge the Team tier at the start of each billing interval. The subscription renews automatically at the
+        end of each interval until you cancel it. We charge the payment method you saved.</p>
+        <h3>Trial</h3>
+        <p>The trial needs no payment card. We cannot charge you during the trial because we hold no payment method.
+        We charge you only after you add a payment method and confirm a paid subscription. If you add a payment card
+        during the trial but do not confirm a paid subscription, we do not charge you, and the workspace moves to the
+        Free tier when the trial ends. We tell you the first charge date when you confirm the paid subscription.</p>
+        <h3>Cancellation</h3>
+        <p>You may cancel a paid subscription at any time in your workspace settings. The cancellation stops the next
+        renewal. You keep paid access until the end of the interval you already paid for. The workspace then moves to
+        the Free tier.</p>
+        <h3>Failed payment</h3>
+        <p>If a charge fails, we retry the charge and send you a notice. If the payment still fails after the retry
+        period, we move the workspace to the Free tier. We do not delete your documents, and we do not hold your data
+        as security for payment. You keep the right to read and export your Content on the Free tier.</p>
+        <h3>Refunds</h3>
+        <p>Fees are non-refundable. We give a refund only where the law requires one. In that case we give the refund
+        in the amount and the form that the applicable law requires.</p>
+        <h3>Service level</h3>
+        <p>The self-serve Team tier carries no service level agreement (SLA), no uptime commitment, and no support
+        response time commitment. Section 11 (Disclaimers) applies to the Team tier.</p>
+        <h3>Price changes</h3>
+        <p>We may change our prices. We send you a notice at least 30 days before a price change takes effect for your
+        subscription. You may cancel before the new price applies.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>10. Beta Features, Service Changes, and Termination</h2>
+        <p>Where we label the Service or a feature as beta, preview, or experimental, that feature may change, break,
+        or be withdrawn at any time. We provide beta features without any warranty and without any support commitment,
+        and we may reset or delete data that a beta feature holds. Sections 11 and 12 apply in full to beta features.</p>
+        <p>We may modify, suspend, or discontinue the Service, or any part of it, at any time. If we discontinue the
+        Service as a whole, we give you at least 30 days notice and a way to export your Content during that period,
+        unless the law or a security incident prevents it. You may stop using the Service and delete your account at
+        any time. We may suspend or terminate your access if you violate these Terms, if we reasonably believe you are
+        misusing the Service, or as otherwise necessary to protect the Service or our users. Sections 5, 6, 7, 11, 12,
+        13, and 14 survive termination.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>11. Disclaimers</h2>
+        <p>The Service is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind,
+        whether express, implied, or statutory, including any implied warranty of merchantability, fitness for a
+        particular purpose, title, or non-infringement. We do not warrant that the Service will be uninterrupted,
+        error-free, or secure, that any sync with an external source will be accurate or complete, that AI output will
+        be accurate, or that Content will not be lost, altered, or corrupted. You use the Service at your own risk.
+        Some jurisdictions do not allow the exclusion of certain warranties, so some of these exclusions may not apply
+        to you.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>12. Limitation of Liability</h2>
+        <p><strong>Excluded losses.</strong> To the maximum extent permitted by law, ArtifactBridge, its affiliates,
+        and their officers, directors, employees, and agents shall not be liable for any indirect, incidental,
+        special, consequential, exemplary, or punitive damages, or for any loss of data, loss of profits, loss of
+        business, loss of goodwill, or cost of substitute services, arising out of or related to the Service or these
+        Terms, whether based on warranty, contract, tort (including negligence), statute, or any other legal theory,
+        even if we have been advised of the possibility of such damages. This exclusion covers loss that results from
+        an action of an AI agent, a sync with an external source, a third-party service, or unauthorized access to
+        your account.</p>
+        <p><strong>Liability cap.</strong> To the maximum extent permitted by law, the total aggregate liability of
+        ArtifactBridge and its affiliates for all claims arising out of or related to the Service or these Terms shall
+        not exceed the greater of (a) the fees you paid to ArtifactBridge in the 12 months before the event that gave
+        rise to the claim, and (b) USD 100. This cap applies to all claims together, not to each claim.</p>
+        <p><strong>Exceptions.</strong> Nothing in these Terms excludes or limits a liability that the applicable law
+        does not allow a party to exclude or limit, including liability for death or personal injury caused by
+        negligence, for fraud or fraudulent misrepresentation, or for gross negligence or willful misconduct. If you
+        are a consumer in a jurisdiction whose law gives you a right that this section would remove, that right stays
+        with you.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>13. Indemnification</h2>
+        <p>You agree to defend, indemnify, and hold harmless ArtifactBridge, its affiliates, and their officers,
+        directors, employees, and agents from any third-party claim, and from the damages, losses, and expenses
+        (including reasonable legal fees) that result from that claim, to the extent it arises out of: (a) your
+        Content; (b) your breach of these Terms or of applicable law; (c) a connection to an external source, an agent,
+        or a grant that you or a member of your workspace authorized; or (d) your violation of a third party's rights.
+        This obligation does not apply to the extent a claim results from our breach of these Terms or from our gross
+        negligence or willful misconduct.</p>
+        <p>We will notify you promptly of a claim that we ask you to indemnify, give you reasonable control of the
+        defense and settlement with counsel of your choice that we approve (approval not to be unreasonably withheld),
+        and cooperate at your expense. You may not settle a claim in a way that admits fault on our behalf or imposes
+        an obligation on us without our prior written consent. If you are a consumer, this section applies only to the
+        extent the applicable law permits.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>14. Contracting Entity, Governing Law, and Disputes</h2>
+        <p>You contract with Omnim Inc., a corporation organized under the laws of the State of Delaware, United
+        States, with its principal place of business at 1111B Governors Ave STE 28169, Dover, DE 19904, United
+        States.</p>
+        <p>These Terms are governed by the laws of the State of Delaware, United States, without regard to its
+        conflict-of-laws principles. The United Nations Convention on Contracts for the International Sale of Goods
+        does not apply. You agree to the exclusive jurisdiction of the state and federal courts located in Delaware
+        for any dispute that arises from these Terms or the Service. Before either party files a claim, the party sends
+        the other a written description of the dispute, and the parties try to resolve it in good faith for 30 days.
+        This section does not remove a consumer right to bring a claim in the courts of your country of residence
+        where the law of that country gives you that right.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>15. Changes to These Terms</h2>
+        <p>We may revise these Terms. We publish every revision as a numbered version with an effective date. We treat
+        a revision as material when it changes your rights, our liability, the fees you pay, or how we process your
+        personal data. We treat every other revision as non-material.</p>
+        <h3>Non-material changes</h3>
+        <p>We post the revised Terms on this page, update the version identifier and the effective date, and send you
+        a notice by email or in the Service before the effective date. You do not need to take any action.</p>
+        <h3>Material changes</h3>
+        <p>We send you a notice by email or in the Service. We ask you to accept the new version explicitly. You must
+        accept the new version before you continue to use the Service. We do not treat continued use as acceptance.</p>
+        <p>While your acceptance is pending, we block the rest of the Service, and you keep these account actions: you
+        can read the new Terms and the new Privacy Policy and accept them, you can sign out, you can export your data,
+        and you can delete your account.</p>
+        <p>If you do not accept the new version, you may delete your account. The prior version stays in force for you
+        until you accept the new version or delete your account.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>16. General Terms</h2>
+        <p>These Terms, the Privacy Policy, and any Data Processing Addendum that applies are the entire agreement
+        between you and ArtifactBridge about the Service. If a court finds a provision of these Terms unenforceable,
+        the rest of the Terms stay in force, and the court applies the provision to the extent the law allows. Our
+        failure to enforce a provision is not a waiver of it. You may not assign these Terms without our written
+        consent. We may assign these Terms to an affiliate or to a successor in a merger, acquisition, or sale of
+        assets. Neither party is liable for a delay or failure caused by an event outside its reasonable control. You
+        must comply with export control and sanctions laws that apply to your use of the Service. Notices to you go to
+        the email address on your account.</p>
+      </section>
+
+      <div class="legal-contact">
+        <h2 style="margin-bottom:8px">17. Contact Us</h2>
+        <p>If you have questions about these Terms, contact us at
+        <a href="mailto:support@omnim.ai">support@omnim.ai</a>, or write to Omnim Inc., 1111B Governors Ave STE 28169,
+        Dover, DE 19904, United States.</p>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="band-green site-footer">
+  <div class="label-mono foot">
+    <p class="foot-brand">ArtifactBridge</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="./docs.html">Documentation</a>
+      <a href="./privacy.html">Privacy</a>
+      <a href="./terms.html">Terms</a>
+      <a href="./security.html">Security</a>
+      <a href="./subprocessors.html">Subprocessors</a>
+      <a href="mailto:support@omnim.ai">support@omnim.ai</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
