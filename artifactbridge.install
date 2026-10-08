@@ -1,0 +1,146 @@
+# ArtifactBridge pacman install hooks (docs/specs/aur-distribution.md,
+# section 7). They mirror the Debian maintainer scripts
+# (desktop/src-tauri/package-scripts/deb-postinst.sh and deb-prerm.sh).
+# pacman calls post_upgrade for an upgrade or a downgrade, so no hook needs an
+# argument test. AB_PACKAGE_ROOT is a test-only root; pacman leaves it unset.
+
+_artifactbridge_register() (
+  set -eu
+  package_upgrade="$1"
+  package_root="${AB_PACKAGE_ROOT:-/}"
+  toolkit="${package_root%/}/usr/bin/artifactbridge"
+  install_root="${package_root%/}/usr"
+  record_root="${package_root%/}/var/lib/artifactbridge"
+  generation_file="$record_root/install-generation"
+  upgrade_marker="$record_root/preserve-user-data-on-upgrade"
+  update_handoff="$record_root/package-update-handoff"
+  lineage_header="artifactbridge-install-lineage-v1"
+  lineage_max_generations=1024
+
+  valid_install_generation() {
+    value="$1"
+    [ "${#value}" -ge 16 ] && [ "${#value}" -le 128 ] || return 1
+    case "$value" in
+      *[!A-Za-z0-9-]*) return 1 ;;
+    esac
+  }
+
+  write_install_generation() {
+    temporary="$generation_file.tmp.$$"
+    if od -An -N16 -tx1 /dev/urandom | tr -d ' \n' > "$temporary" &&
+       [ -s "$temporary" ] &&
+       chmod 644 "$temporary" &&
+       mv -f "$temporary" "$generation_file"; then
+      return 0
+    fi
+    rm -f "$temporary"
+    return 1
+  }
+
+  # AI-3445: the upgrade marker is the package's install lineage: a "complete"
+  # or "partial" header, then every install generation since a fresh install,
+  # oldest first, ending with the current one.
+  write_upgrade_lineage() {
+    lineage_state="$1"
+    generations="$2"
+    temporary="$upgrade_marker.tmp.$$"
+    if printf '%s %s\n%s\n' "$lineage_header" "$lineage_state" "$generations" > "$temporary" &&
+       chmod 644 "$temporary" &&
+       mv -f "$temporary" "$upgrade_marker"; then
+      return 0
+    fi
+    rm -f "$temporary"
+    return 1
+  }
+
+  read_upgrade_lineage() {
+    recorded_state=""
+    recorded_generations=""
+    [ -f "$upgrade_marker" ] || return 0
+    lineage_first=""
+    IFS= read -r lineage_first < "$upgrade_marker" || :
+    case "$lineage_first" in
+      "$lineage_header complete") lineage_recorded=complete; lineage_body="$(sed 1d "$upgrade_marker")" ;;
+      "$lineage_header partial") lineage_recorded=partial; lineage_body="$(sed 1d "$upgrade_marker")" ;;
+      *) lineage_recorded=partial; lineage_body="$(cat "$upgrade_marker")" ;;
+    esac
+    if printf '%s\n' "$lineage_body" | grep -qv '^[A-Za-z0-9-]\{16,128\}$' ||
+       [ "$(printf '%s\n' "$lineage_body" | tail -n 1)" != "$1" ]; then
+      return 0
+    fi
+    recorded_state="$lineage_recorded"
+    recorded_generations="$lineage_body"
+  }
+
+  umask 022
+  mkdir -p "$record_root"
+  previous_generation=""
+  if [ -s "$generation_file" ]; then
+    IFS= read -r previous_generation < "$generation_file" || :
+  fi
+  # pacman owns the upgrade transaction. Remove the retired app-managed
+  # handoff before the package records the native lifecycle result.
+  # AI-838-SAFE-DESTRUCTIVE id=ai3580-aur-retired-handoff-remove test=aur-package-hooks reason=the package transaction removes only its fixed obsolete handoff file before it records the upgrade result
+  rm -f "$update_handoff"
+  write_install_generation
+  IFS= read -r current_generation < "$generation_file" || :
+
+  if [ "$package_upgrade" -eq 1 ] &&
+     valid_install_generation "$previous_generation" &&
+     valid_install_generation "$current_generation" &&
+     [ "$previous_generation" != "$current_generation" ]; then
+    read_upgrade_lineage "$previous_generation"
+    if [ -n "$recorded_generations" ]; then
+      lineage_state="$recorded_state"
+      generations="$recorded_generations"
+      if [ "$(printf '%s\n' "$generations" | wc -l)" -ge "$lineage_max_generations" ]; then
+        lineage_state=partial
+        generations="$(printf '%s\n' "$generations" | tail -n "$((lineage_max_generations - 1))")"
+      fi
+    else
+      lineage_state=partial
+      generations="$previous_generation"
+    fi
+    write_upgrade_lineage "$lineage_state" "$generations
+$current_generation"
+  elif [ "$package_upgrade" -eq 1 ]; then
+    # An upgrade from a package that recorded no valid generation.
+    write_upgrade_lineage partial "$current_generation"
+  else
+    write_upgrade_lineage complete "$current_generation"
+  fi
+
+  "$toolkit" installation register-unix-package \
+    --owner linux-pacman \
+    --install-root "$install_root" \
+    --record-root "$record_root"
+)
+
+post_install() {
+  _artifactbridge_register 0
+}
+
+post_upgrade() {
+  _artifactbridge_register 1
+}
+
+pre_remove() {
+  package_root="${AB_PACKAGE_ROOT:-/}"
+  record_root="${package_root%/}/var/lib/artifactbridge"
+  if ! "${package_root%/}/usr/bin/artifactbridge" installation unregister-unix-package \
+    --owner linux-pacman \
+    --install-root "${package_root%/}/usr" \
+    --record-root "$record_root"; then
+    printf '%s\n' 'warning: could not remove the ArtifactBridge installation owner record; package removal will continue' >&2
+  fi
+  # A later install must get a new generation even when owner-record removal
+  # reports a warning. User state stays.
+  # AI-838-SAFE-DESTRUCTIVE id=ai3580-aur-install-generation-remove test=aur-package-hooks reason=the package remove transaction deletes only its three fixed lifecycle files
+  rm -f "$record_root/install-generation" \
+    "$record_root/preserve-user-data-on-upgrade" \
+    "$record_root/package-update-handoff"
+}
+
+post_remove() {
+  rmdir "${AB_PACKAGE_ROOT:-/}"/var/lib/artifactbridge 2>/dev/null || :
+}
