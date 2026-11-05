@@ -2,7 +2,7 @@
 # packaging/aur/render.sh fills the @...@ values; the recipe repository
 # omnim-ai/aur-artifactbridge publishes the rendered copy.
 pkgname=artifactbridge-bin
-pkgver=0.5.201
+pkgver=0.5.202
 pkgrel=1
 pkgdesc='ArtifactBridge desktop app and CLI'
 arch=('x86_64')
@@ -17,7 +17,7 @@ _tarball="ArtifactBridge-Tray-linux-x86_64-${pkgver}.tar.gz"
 source=("${_tarball}::https://app.artifactbridge.com/tray/releases/download/tray-v${pkgver}/ArtifactBridge-Tray-linux-x86_64.tar.gz"
         'LICENSE')
 noextract=("${_tarball}")
-sha256sums=('2809169f0ceae7f4563aaae247512d127532f4c8842506e26f794ceb5fa28709'
+sha256sums=('914c7dddfa228827ddf49a8634f009a1ad034f4966920948cc6e87823bf5cd36'
             '6b90a5c8adc141d17822187c3f02f49e1512e5744f216f75e8ee8e90460c0bb8')
 
 package() {
