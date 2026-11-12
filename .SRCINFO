@@ -1,6 +1,6 @@
 pkgbase = artifactbridge-bin
 	pkgdesc = ArtifactBridge desktop app and CLI
-	pkgver = 0.6.14
+	pkgver = 0.6.15
 	pkgrel = 1
 	url = https://www.artifactbridge.com/
 	install = artifactbridge.install
@@ -12,12 +12,12 @@ pkgbase = artifactbridge-bin
 	depends = polkit
 	provides = artifactbridge
 	conflicts = artifactbridge
-	noextract = ArtifactBridge-Tray-linux-x86_64-0.6.14.tar.gz
+	noextract = ArtifactBridge-Tray-linux-x86_64-0.6.15.tar.gz
 	options = !strip
 	options = !debug
-	source = ArtifactBridge-Tray-linux-x86_64-0.6.14.tar.gz::https://app.artifactbridge.com/tray/releases/download/tray-v0.6.14/ArtifactBridge-Tray-linux-x86_64.tar.gz
+	source = ArtifactBridge-Tray-linux-x86_64-0.6.15.tar.gz::https://app.artifactbridge.com/tray/releases/download/tray-v0.6.15/ArtifactBridge-Tray-linux-x86_64.tar.gz
 	source = LICENSE
-	sha256sums = bc469c446542b2336e0e16966810701d7952fb9b4d129b5bacf83e609941bf4d
+	sha256sums = 402f267eae607ce98a3cad3179d00c2df487130261a901b7150aaf82806c8840
 	sha256sums = 6b90a5c8adc141d17822187c3f02f49e1512e5744f216f75e8ee8e90460c0bb8
 
 pkgname = artifactbridge-bin
